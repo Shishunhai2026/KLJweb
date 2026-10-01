@@ -16,6 +16,20 @@ const securityHeaders = [
   },
 ]
 
+/**
+ * 演示/预览环境（如 Vercel 演示站）用 noindex 防止被搜索引擎收录。
+ *
+ * 刻意由环境变量控制，不在代码里写死演示行为：正式生产环境不设 SITE_NOINDEX，
+ * 响应头与原先完全一致。同一份代码因此既能跑演示站又能跑正式站。
+ *
+ * 注意：noindex 必须配合「允许抓取」才生效——被 robots.txt 的 Disallow 挡住的页面，
+ * 爬虫根本读不到这个响应头。所以 app/robots.ts 要保持 Allow，不要改成 Disallow。
+ */
+const siteHeaders =
+  process.env.SITE_NOINDEX === '1'
+    ? [...securityHeaders, { key: 'X-Robots-Tag', value: 'noindex, nofollow' }]
+    : securityHeaders
+
 const nextConfig: NextConfig = {
   // 独立产物，便于用 PM2 部署到国内 Node 服务器
   output: 'standalone',
@@ -54,7 +68,7 @@ const nextConfig: NextConfig = {
 
   async headers() {
     return [
-      { source: '/:path*', headers: securityHeaders },
+      { source: '/:path*', headers: siteHeaders },
       {
         // 运行期数据目录绝不应被静态服务
         source: '/data/:path*',
