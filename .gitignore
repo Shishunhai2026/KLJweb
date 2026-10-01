@@ -56,3 +56,6 @@ yarn-error.log*
 /_*.txt
 # 根目录未被代码直接引用的原始图，成品是 public/images/sleep-deprivation-impact.webp
 /睡眠不足的深层次影响.png
+
+# Vercel CLI 生成的本地项目链接（含 projectId / orgId），不入库
+.vercel
