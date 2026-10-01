@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="卡通人物的头部里有一台卡住生锈的齿轮，表示脑子转不动">
+  <title>脑子转不动</title>
+  <circle cx="100" cy="106" r="56" fill="#c6ddf0" stroke="#0e2439" stroke-width="5"/>
+  <!-- 打开的天灵盖，露出里面的齿轮 -->
+  <path d="M48 84c0-24 23-42 52-42s52 18 52 42" fill="#0e2439"/>
+  <circle cx="100" cy="98" r="30" fill="#f4f2ee"/>
+  <!-- 卡住的齿轮 -->
+  <g stroke="#295381" stroke-width="4.5" stroke-linejoin="round">
+    <path d="M100 78l6 5 8-2 2 8 7 5-4 7 2 8-8 2-5 7-7-4-8 2-2-8-7-5 4-7-2-8 8-2z" fill="#6ba3d2"/>
+    <circle cx="100" cy="98" r="7" fill="#f4f2ee"/>
+  </g>
+  <!-- 旁边歪掉的小齿轮 -->
+  <g transform="rotate(22 148 128)" stroke="#295381" stroke-width="4" stroke-linejoin="round">
+    <path d="M148 114l4 4 6-1 1 6 5 4-3 5 1 6-6 1-4 5-5-3-6 1-1-6-5-4 3-5-1-6 6-1z" fill="#d9a94b"/>
+    <circle cx="148" cy="128" r="4.5" fill="#f4f2ee"/>
+  </g>
+  <!-- 生锈的碎屑 -->
+  <circle cx="66" cy="130" r="3" fill="#d9a94b"/>
+  <circle cx="78" cy="146" r="2.4" fill="#d9a94b" opacity=".7"/>
+  <!-- 问号 -->
+  <path d="M160 44c0-9 7-15 15-15s14 5 14 13c0 9-9 10-9 18" stroke="#295381" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <circle cx="180" cy="76" r="3.6" fill="#295381"/>
+  <path d="M28 56c0-6 5-10 10-10s10 4 10 9c0 6-6 7-6 12" stroke="#6ba3d2" stroke-width="4" fill="none" stroke-linecap="round" opacity=".7"/>
+  <circle cx="42" cy="77" r="2.8" fill="#6ba3d2" opacity=".7"/>
+</svg>

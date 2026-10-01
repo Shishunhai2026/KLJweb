@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="卡通人物头顶冒烟、眉头紧锁，表示情绪烦躁易怒">
+  <title>情绪烦躁</title>
+  <circle cx="100" cy="110" r="56" fill="#c6ddf0" stroke="#0e2439" stroke-width="5"/>
+  <path d="M46 90c2-26 25-44 54-44s52 18 54 44c-16-12-32-16-54-16s-38 4-54 16z" fill="#0e2439"/>
+  <!-- 竖起的眉毛 -->
+  <path d="M62 96l26 8" stroke="#0e2439" stroke-width="6" stroke-linecap="round"/>
+  <path d="M138 96l-26 8" stroke="#0e2439" stroke-width="6" stroke-linecap="round"/>
+  <!-- 瞪大的眼睛 -->
+  <circle cx="76" cy="116" r="7" fill="#f4f2ee" stroke="#0e2439" stroke-width="4"/>
+  <circle cx="124" cy="116" r="7" fill="#f4f2ee" stroke="#0e2439" stroke-width="4"/>
+  <circle cx="76" cy="116" r="2.6" fill="#0e2439"/>
+  <circle cx="124" cy="116" r="2.6" fill="#0e2439"/>
+  <!-- 咬紧的嘴 -->
+  <path d="M80 142h40" stroke="#0e2439" stroke-width="5" stroke-linecap="round"/>
+  <path d="M88 136v6M100 136v6M112 136v6" stroke="#0e2439" stroke-width="3" stroke-linecap="round"/>
+  <!-- 头顶冒烟 -->
+  <path d="M74 48c-8-8 4-14-2-22" stroke="#d9a94b" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M100 42c-8-9 5-15-2-24" stroke="#d9a94b" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M126 48c-8-8 4-14-2-22" stroke="#d9a94b" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <!-- 爆开的火星 -->
+  <path d="M32 62l-9-6M36 44l-5-10M168 62l9-6M164 44l5-10" stroke="#b03a3a" stroke-width="5" stroke-linecap="round"/>
+  <path d="M22 108h-10M188 108h-10" stroke="#b03a3a" stroke-width="5" stroke-linecap="round" opacity=".65"/>
+</svg>

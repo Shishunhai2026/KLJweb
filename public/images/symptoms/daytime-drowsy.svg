@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="卡通人物在工作时低头打瞌睡，手里的咖啡正在倾倒">
+  <title>白天犯困</title>
+  <!-- 桌面 -->
+  <rect x="18" y="152" width="164" height="10" rx="5" fill="#0e2439"/>
+  <!-- 身子趴着 -->
+  <path d="M56 152v-32c0-12 10-20 22-20h44c12 0 22 8 22 20v32z" fill="#295381"/>
+  <!-- 低垂的头 -->
+  <g transform="rotate(-24 128 112)">
+    <circle cx="128" cy="104" r="34" fill="#c6ddf0" stroke="#0e2439" stroke-width="5"/>
+    <path d="M96 92c2-18 16-28 32-28s30 10 32 28c-10-7-20-10-32-10s-22 3-32 10z" fill="#0e2439"/>
+    <path d="M112 108h12M132 108h12" stroke="#0e2439" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M120 124a9 9 0 0 0 16 0" stroke="#0e2439" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+  <!-- 倾倒的咖啡杯 -->
+  <g transform="rotate(38 52 138)">
+    <rect x="38" y="126" width="30" height="24" rx="5" fill="#d9a94b" stroke="#0e2439" stroke-width="4"/>
+    <path d="M68 132h9a7 7 0 0 1 0 14h-9" fill="none" stroke="#0e2439" stroke-width="4"/>
+  </g>
+  <path d="M62 150c6 6 16 6 22 0" stroke="#6ba3d2" stroke-width="4" fill="none" stroke-linecap="round" opacity=".8"/>
+  <!-- Z Z Z -->
+  <path d="M156 40l12 16h-12l12 16" stroke="#d9a94b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M136 22l8 11h-8l8 11" stroke="#d9a94b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".7"/>
+  <path d="M168 70l6 8h-6l6 8" stroke="#d9a94b" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".45"/>
+</svg>

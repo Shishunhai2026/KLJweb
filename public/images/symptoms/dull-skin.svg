@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="卡通人物的气色暗淡，头顶的灯泡熄灭了，旁边的小花也蔫了">
+  <title>皮肤暗沉、状态下滑</title>
+
+  <!--
+    设计说明（重要）：
+    这里刻意**不通过加深肤色**来表现「暗沉」——
+    那样容易被读成对肤色的暗示，是敏感且不必要的手法。
+    改用「头顶灯泡熄灭 + 周围光泽消失 + 旁边小花蔫掉」来传达气色下滑，
+    人物肤色与其他五张插画完全一致。
+  -->
+
+  <!-- 熄灭的灯泡 -->
+  <g>
+    <path d="M100 26c14 0 24 10 24 22 0 9-5 14-8 20h-32c-3-6-8-11-8-20 0-12 10-22 24-22z" fill="#d5d0c6" stroke="#0e2439" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M86 68h28v8H86z" fill="#a8a196" stroke="#0e2439" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M92 76v6M108 76v6" stroke="#0e2439" stroke-width="4" stroke-linecap="round"/>
+    <!-- 灯泡里暗淡的灯丝 -->
+    <path d="M94 46l6 8 6-8" stroke="#7d766b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- 熄灭了：用一个斜杠表示 -->
+    <path d="M78 34l44 44" stroke="#b03a3a" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <!-- 人物（肤色与其他插画一致） -->
+  <circle cx="100" cy="130" r="46" fill="#c6ddf0" stroke="#0e2439" stroke-width="5"/>
+  <path d="M58 118c2-22 20-36 42-36s40 14 42 36c-14-10-26-14-42-14s-28 4-42 14z" fill="#0e2439"/>
+  <!-- 无神的眼睛 -->
+  <path d="M80 128h14M106 128h14" stroke="#0e2439" stroke-width="4.5" stroke-linecap="round"/>
+  <circle cx="87" cy="136" r="3" fill="#0e2439"/>
+  <circle cx="113" cy="136" r="3" fill="#0e2439"/>
+  <!-- 平淡的嘴 -->
+  <path d="M88 154h24" stroke="#0e2439" stroke-width="4.5" stroke-linecap="round"/>
+
+  <!-- 原本发光的位置：现在只剩虚线光斑 -->
+  <g stroke="#a8a196" stroke-width="4" stroke-linecap="round" stroke-dasharray="3 7">
+    <path d="M46 96l-9-9"/>
+    <path d="M154 96l9-9"/>
+    <path d="M40 138h-11"/>
+    <path d="M160 138h11"/>
+    <path d="M52 168l-8 8"/>
+    <path d="M148 168l8 8"/>
+  </g>
+
+  <!-- 蔫掉的小花 -->
+  <g>
+    <path d="M162 176h-26l3-20h20z" fill="#d9a94b" stroke="#0e2439" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M149 156c-1-10-7-14-13-15 2 9 7 13 13 15z" fill="#a8a196"/>
+    <path d="M149 156c1-9 8-12 14-12-3 8-8 11-14 12z" fill="#a8a196"/>
+    <path d="M149 156v-16" stroke="#0e2439" stroke-width="4" stroke-linecap="round"/>
+    <!-- 掉落的花瓣 -->
+    <path d="M170 178c4-3 9-2 10 2-4 2-8 1-10-2z" fill="#d5d0c6"/>
+  </g>
+</svg>

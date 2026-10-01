@@ -1,0 +1,58 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# production
+/build
+
+# 运行期数据（线索、AI 会话）——含个人信息，绝不入库
+/data/runtime/
+
+# 构建产物（AI 检索索引、嵌入向量）
+/data/generated/
+
+# 测试
+/coverage
+/test-results
+/playwright-report
+/blob-report
+/.vitest
+
+# 开发期截图产物（scripts/_shot-*.mjs、_screenshot.mjs 的输出）
+# 每次跑脚本都会重新生成，入库只会制造无意义的 diff
+/.preview/
+
+# misc
+.DS_Store
+*.pem
+.vscode/
+.idea/
+
+# 环境变量
+.env
+.env*.local
+!.env.example
+
+# 调试日志
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tsbuildinfo
+
+# ---------------------------------------------------------------------------
+# 客户原始资料：不随仓库分发，也不参与构建
+# ---------------------------------------------------------------------------
+/产品资料/
+/产品图片/
+/网站首页轮播图片/
+*.docx
+*.pdf
+/_*.txt
+# 根目录未被代码直接引用的原始图，成品是 public/images/sleep-deprivation-impact.webp
+/睡眠不足的深层次影响.png
