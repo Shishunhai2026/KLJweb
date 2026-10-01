@@ -8,12 +8,18 @@ import type { LeadRecord, LeadSubmission } from '../content/schemas/lead'
 /**
  * 线索存储。
  *
- * 默认实现是追加写的 JSONL 文件——不需要数据库即可上线。
- * 之所以做成接口而不是直接写文件：客户后续换成 PostgreSQL / Supabase 时，
- * 只需新增一个实现，API 路由与页面完全不用改。
+ * ⚠️ 本项目已改为**纯静态导出**，部署在共享虚拟主机上，没有 Node 运行时。
+ *    因此**生产实现是 `public/api/leads.php`**，本文件不参与构建——
+ *    它保留下来作为那份 PHP 实现的**对照规范**：记录结构、加盐哈希算法
+ *    （sha256(salt + ":" + ip)）、无盐时不存哈希，都以这里为准。
+ *    **改动其一请同步另一份**，否则两边会静默漂移。
  *
- * ⚠️ JSONL 模式下必须单进程写入（PM2 用 fork 模式、单实例）。
- *    多进程并发追加会交错损坏文件。需要多实例时请切换到 postgres 实现。
+ * 默认实现是追加写的 JSONL 文件。
+ * 之所以做成接口而不是直接写文件：将来换成 PostgreSQL / Supabase 时，
+ * 只需新增一个实现，调用方完全不用改。
+ *
+ * ⚠️ 旧的约束已随静态化消失：原先要求「JSONL 模式必须单进程写入（PM2 fork 单实例）」，
+ *    PHP 侧改用了 `FILE_APPEND | LOCK_EX`，本身就是跨进程原子的，不再需要这条约定。
  */
 export interface LeadStore {
   save(lead: LeadRecord): Promise<void>

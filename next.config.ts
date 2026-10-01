@@ -1,42 +1,32 @@
 import type { NextConfig } from 'next'
 
 /**
- * 安全响应头。
- * 注意：Content-Security-Policy 需要按实际接入的统计域名（百度统计 / GA4 / Clarity）
- * 逐项放开，因此此处只给出保守的默认值，上线前必须按 M7 的实际统计配置复核。
- */
-const securityHeaders = [
-  { key: 'X-Content-Type-Options', value: 'nosniff' },
-  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-  { key: 'X-DNS-Prefetch-Control', value: 'on' },
-  {
-    key: 'Permissions-Policy',
-    value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
-  },
-]
-
-/**
- * 演示/预览环境（如 Vercel 演示站）用 noindex 防止被搜索引擎收录。
+ * 纯静态导出：产物在 out/，整体上传到阿里云虚拟主机。
  *
- * 刻意由环境变量控制，不在代码里写死演示行为：正式生产环境不设 SITE_NOINDEX，
- * 响应头与原先完全一致。同一份代码因此既能跑演示站又能跑正式站。
+ * 本项目部署在**共享虚拟主机**（无 SSH、无 Node 运行时），因此不存在服务端进程——
+ * Route Handler、headers()、图片优化全部不可用。唯一的动态能力（线索提交）
+ * 由 `public/api/leads.php` 承接（PHP 是虚拟主机原生支持的）。
  *
- * 注意：noindex 必须配合「允许抓取」才生效——被 robots.txt 的 Disallow 挡住的页面，
- * 爬虫根本读不到这个响应头。所以 app/robots.ts 要保持 Allow，不要改成 Disallow。
+ * 注意：以下配置在 export 模式下**只会产生一条构建警告然后静默失效**，
+ * 因此已全部删除，避免它们看起来还在生效：
+ *   · headers()               —— 安全响应头改由主机层配置，见 deploy/README.md
+ *   · outputFileTracingIncludes / Excludes —— export 不产出 server trace
  */
-const siteHeaders =
-  process.env.SITE_NOINDEX === '1'
-    ? [...securityHeaders, { key: 'X-Robots-Tag', value: 'noindex, nofollow' }]
-    : securityHeaders
-
 const nextConfig: NextConfig = {
-  // 独立产物，便于用 PM2 部署到国内 Node 服务器
-  output: 'standalone',
+  output: 'export',
 
-  // canonical 一律不带尾斜杠；Next 会把带斜杠的形式 301 过来。
-  // 绝不同时输出两种形式——这是百度 SEO 最常见的自我伤害。
-  trailingSlash: false,
+  /*
+   * 带尾斜杠：产物是 about/index.html，任何主机零配置即可正确服务。
+   *
+   * 不带尾斜杠的产物是 about.html，需要主机把 /about 映射过去——那要靠伪静态规则，
+   * 而共享主机的伪静态框能否配置、配了是否生效都无法预先确认，配不上则除首页外全部 404。
+   * 因此这里选带斜杠形态，把部署对主机配置的依赖降到零。
+   *
+   * ⚠️ 这个值必须与 lib/seo/site.ts 的 TRAILING_SLASH 常量保持一致。两处不一致会让
+   * canonical 与实际服务的 URL 形态不符，而且**不会报错**。上线后也不可再切换：
+   * 共享主机通常表达不出 /about ⇄ /about/ 的 301。
+   */
+  trailingSlash: true,
 
   /*
    * Next 16 已移除构建期内置的 ESLint 检查，代码检查统一由
@@ -45,37 +35,12 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
 
-  images: {
-    // 产品图片为本地静态资源，无需远端白名单
-    formats: ['image/avif', 'image/webp'],
-  },
-
-  /**
-   * 护栏规则与知识库语料是在**运行期**用 fs 读取的（路径是动态拼的），
-   * Next 的文件追踪无法静态发现它们。若不加这段，standalone 产物会缺少
-   * content/_guardrails 与 content/knowledge-base，
-   * 结果是 AI 助手在服务器上启动即抛错——护栏缺失时必须拒绝启动，而不是无保护运行。
+  /*
+   * 静态导出没有图片优化服务，默认 loader 会直接让构建失败。
+   * 当前全站没有一处使用 next/image（都是 <img> 直引 public/ 下已优化好的 webp），
+   * 所以现在不会报错；这一行是为了防止将来有人引入 <Image> 时踩坑。
    */
-  outputFileTracingIncludes: {
-    '/api/ai/**': ['./content/_guardrails/**', './content/knowledge-base/**'],
-    '/api/leads/**': ['./content/**'],
-  },
-
-  /** 客户原始资料不进入构建产物。 */
-  outputFileTracingExcludes: {
-    '/**': ['./产品资料/**', './产品图片/**', './网站首页轮播图片/**'],
-  },
-
-  async headers() {
-    return [
-      { source: '/:path*', headers: siteHeaders },
-      {
-        // 运行期数据目录绝不应被静态服务
-        source: '/data/:path*',
-        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
-      },
-    ]
-  },
+  images: { unoptimized: true },
 }
 
 export default nextConfig

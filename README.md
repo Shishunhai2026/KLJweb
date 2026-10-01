@@ -16,9 +16,12 @@ export PATH="/c/Users/Administrator/AppData/Local/nvm/v24.15.0:$PATH"
 
 npm install
 npm run dev        # 开发：http://localhost:3000
-npm run build      # 生产构建
-npm run start      # 启动生产服务
+npm run build      # 生成静态产物到 out/
+npm run start      # 本地预览 out/（http://localhost:3200）
 ```
+
+> 本项目是**纯静态导出**（`output: 'export'`）。`out/` 目录就是最终交付物，
+> 整体上传到虚拟主机，没有任何服务端进程。部署步骤见 [deploy/README.md](deploy/README.md)。
 
 ### 常用命令
 
@@ -34,10 +37,13 @@ npm run start      # 启动生产服务
 线上检查与截图需要服务在跑：
 
 ```bash
-npm run build && npm run start     # 另开一个终端
+npm run build && npm run start     # 另开一个终端；start 服务的是 out/ 静态产物
 npm run check:links                # 死链检查
 npm run preview:shots              # 生成预览截图
 ```
+
+> `npm run start` 服务的是 `out/`，端口 3200（与 check-links 和截图脚本的默认值一致）。
+> 它模拟虚拟主机的解析行为：目录索引、缺尾斜杠 301、404 页。
 
 ---
 
@@ -58,7 +64,7 @@ Node 24.15.0 已装在 nvm 下（`C:\Users\Administrator\AppData\Local\nvm\v24.1
 > 注意：`nvm use` 在这台机器上会报「成功」但实际不生效——因为 Node 25 是官方安装包装的，
 > 位于 `C:\Program Files\nodejs`，nvm 覆盖不了它。请用上面 `export PATH=...` 的方式。
 
-**2. `package.json` 里的 dev/build/start 脚本刻意写成直连形式，不要改回 `next build`。**
+**2. `package.json` 里的 dev/build 脚本刻意写成直连形式，不要改回 `next build`。**
 
 ```json
 "build": "node node_modules/next/dist/bin/next build"
@@ -67,6 +73,9 @@ Node 24.15.0 已装在 nvm 下（`C:\Users\Administrator\AppData\Local\nvm\v24.1
 原因：npm 在 Windows 上生成的 `node_modules/.bin/next.cmd` 垫片会干扰 Next 的构建 worker
 （垫片里有 `title %COMSPEC%` 与 `PATHEXT` 改写）。走垫片必崩，直连必过。
 这一点已反复验证：`npm run build` 失败，`node node_modules/next/dist/bin/next build` 成功。
+
+（`start` 已不再是 `next start`——静态导出下它无法服务站点。现在指向
+`scripts/serve-out.mjs`，一个零依赖的本地静态服务器，与 Next 的构建 worker 无关。）
 
 ---
 
@@ -79,15 +88,17 @@ content/                    ← 全部内容。没有数据库，运营可用文
   product-knowledge/        产品资料（MDX）
   knowledge-base/           结构化睡眠问答（YAML）
   _guardrails/              ★ 违禁表述规则（内容校验在用）
-app/                        页面与 API 路由
+app/                        页面（静态导出，无服务端路由）
 components/                 UI 组件（layout / geo / article / isi / lead / ui）
 lib/
   content/                  ★ 内容 Schema 与加载器（构建失败闸门在这里）
   isi/                      睡眠自测量表与计分
   ai/guardrails/            违禁表述扫描（由 content:lint 使用）
   seo/                      统一 metadata、JSON-LD、面包屑
-  leads/                    线索存储（可插拔）
-scripts/                    validate-content / check-links / prepare-assets
+  leads/                    线索记录结构（生产实现是 public/api/leads.php，此处为对照规范）
+public/api/leads.php        ★ 线索接口（PHP）。静态站唯一的动态能力
+deploy/                     部署文档与服务器端配置样例
+scripts/                    validate-content / check-env / serve-out / check-links / prepare-assets
 ```
 
 ---
@@ -169,8 +180,9 @@ scripts/                    validate-content / check-links / prepare-assets
 
 ## 上线前仍需完成（客户侧）
 
-1. **修改 `IP_HASH_SALT`**。`.env` 中当前是占位值 `CHANGE-ME-before-production`，
-   上线前必须替换为随机长字符串——这是 IP 哈希的唯一盐值。
+1. **配置盐值与线索存储路径**。静态站没有 Node 运行时，所以这两个值**不在 `.env`**，
+   而是在服务器的 `klj-private/config.php`（位于网站根目录之外，无法通过 URL 下载）。
+   盐值必须替换为随机长字符串——它是 IP 哈希的唯一盐值。见 [deploy/README.md](deploy/README.md)。
 
 2. **合规复核 F1**。产品定位为特殊膳食，涉及广告法与《食品安全法》的宣称边界，
    建议由法规顾问逐条确认产品页的可发布口径。
@@ -183,8 +195,9 @@ scripts/                    validate-content / check-links / prepare-assets
 
 5. **配置 `BAIDU_PUSH_TOKEN`** 以启用百度普通收录推送（备案已完成，可以启用）。
 
-6. **部署**：`output: 'standalone'`，PM2 + Nginx。注意 JSONL 线索存储模式下
-   PM2 必须用 **fork 模式、单实例**——多进程并发追加会损坏文件。
+6. **部署**：见 [deploy/README.md](deploy/README.md)。`npm run build` 产出 `out/`，
+   把它的**内容**（不是 `out/` 目录本身）上传到虚拟主机的网站根目录。
+   注意上传顺序：**先传 `config.php` 与 `leads.php`，再传静态站**——反过来会让联系表单先失效。
 
 
 ---
@@ -208,8 +221,10 @@ FAQ 至少 5 个、每篇链接 3 篇相关文章 + 1 个睡眠问题专题。
 Next.js 16（App Router，SSG 为主）· React 19 · TypeScript 5.9 · Tailwind CSS 4 ·
 Zod 4 · Vitest 5 · 无数据库（内容为文件）
 
-**部署**：`output: 'standalone'`，配合 PM2 + Nginx 部署到国内 Node 服务器。
-JSONL 线索存储模式下 **PM2 必须用 fork 模式、单实例**——多进程并发追加会损坏文件。
+**部署**：`output: 'export'` 纯静态导出，产物 `out/` 整体上传到阿里云虚拟主机。
+站点没有任何服务端进程；唯一的动态能力（线索提交）由 `public/api/leads.php` 承接。
+URL 采用**带尾斜杠**形态（`/about/`），这样在任何主机上零配置即可正确服务——
+不带斜杠的形态依赖伪静态规则，配不上会导致除首页外全部 404。详见 [deploy/README.md](deploy/README.md)。
 
 ---
 

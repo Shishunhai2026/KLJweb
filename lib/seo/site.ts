@@ -144,8 +144,12 @@ let warnedAboutOrigin = false
 /**
  * 解析站点 origin。
  *
- * 生产环境未配置 NEXT_PUBLIC_SITE_URL 时不会直接抛错（否则无法本地构建预览），
- * 但会打印醒目警告；真正的上线前把关在 scripts/seo-audit.ts 里硬性拦截。
+ * 静态导出会把 origin **烘进每一页 HTML**（canonical / sitemap / JSON-LD），构建后无法再修正。
+ * 所以把关必须发生在构建之前：scripts/check-env.ts 会在生产构建时硬性拦截缺失或错误的取值
+ * （已接入 prebuild，本地与 CI 都会跑）。
+ *
+ * 这里保留 localhost 降级是为了让 `npm run dev` 和本地预览能跑起来。
+ * 生产构建若走到这一行，说明 check-env 没有拦住——那是需要修的 bug，不是预期行为。
  */
 export function getSiteOrigin(): string {
   const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim()
@@ -153,13 +157,12 @@ export function getSiteOrigin(): string {
     return configured.replace(/\/+$/, '')
   }
 
-  // 构建期每个 worker 都是独立进程，模块级标志挡不住重复输出，
-  // 因此这里只保留一行提示；真正的上线把守交给 scripts/seo-audit.ts。
+  // 构建期每个 worker 都是独立进程，模块级标志挡不住重复输出，因此只保留一行提示。
   if (process.env.NODE_ENV === 'production' && !warnedAboutOrigin) {
     warnedAboutOrigin = true
     console.warn(
       '[seo] 未设置 NEXT_PUBLIC_SITE_URL，canonical/sitemap 正在使用 localhost:3000。' +
-        '上线前必须配置该变量并运行 npm run seo:audit。',
+        '生产构建不应出现这行——scripts/check-env.ts 会拦住它。',
     )
   }
 
@@ -171,14 +174,48 @@ export function isUsingPlaceholderOrigin(): boolean {
   return !process.env.NEXT_PUBLIC_SITE_URL?.trim()
 }
 
-/** 把站内路径解析为绝对地址。已是绝对地址的原样返回。 */
+/**
+ * URL 形态：true = 带尾斜杠（/about/）。
+ *
+ * ⚠️ 必须与 next.config.ts 的 trailingSlash 保持一致。两处不一致会让 canonical
+ * 与实际服务的 URL 形态不符，而且**不会报错**。两边都写成硬编码常量，
+ * 就是为了杜绝「一边读环境变量、一边读常量」造成的静默错配。
+ *
+ * 选带尾斜杠的原因见 next.config.ts：静态产物是 about/index.html，任何主机零配置即可服务；
+ * 不带斜杠的形态依赖伪静态规则，配不上则除首页外全部 404。
+ */
+const TRAILING_SLASH = true
+
+/**
+ * 把路径规范成当前服务的形态。
+ *
+ * 末段含 "." 的一律视为文件（/sitemap.xml、/og/default.jpg、/llms.txt），
+ * 给它们加斜杠会直接 404——它们不是页面路由。
+ */
+function applyTrailingSlash(pathname: string): string {
+  if (!TRAILING_SLASH) return pathname.replace(/\/+$/, '') || '/'
+
+  const lastSegment = pathname.split('/').pop() ?? ''
+  if (lastSegment.includes('.')) return pathname
+
+  return pathname.endsWith('/') ? pathname : `${pathname}/`
+}
+
+/**
+ * 把站内路径解析为绝对地址。已是绝对地址的原样返回。
+ *
+ * 这是全站**唯一**的 URL 形态归一化点：metadata.ts / sitemap.ts / jsonld.ts 都经由它，
+ * 因此结构上不可能出现 canonical 与 sitemap 形态不一致。
+ *
+ * lib/seo/routes.ts 里存的是逻辑路由 id（不带斜杠），不要在那里加斜杠——
+ * 那会制造第二个出错点，也会破坏 sitemap.ts 里 `section.path === '/product'` 这类比较。
+ */
 export function absoluteUrl(pathOrUrl: string): string {
   if (/^https?:\/\//i.test(pathOrUrl)) return pathOrUrl
 
   const origin = getSiteOrigin()
   const normalized = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`
-  // 统一不带尾斜杠，与 next.config.ts 的 trailingSlash: false 保持一致
-  return `${origin}${normalized === '/' ? '' : normalized.replace(/\/+$/, '')}`
+  return `${origin}${applyTrailingSlash(normalized)}`
 }
 
 /** 当前生效的 origin。 */

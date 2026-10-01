@@ -9,17 +9,17 @@
   "scripts": {
     "dev": "node node_modules/next/dist/bin/next dev",
     "build": "node node_modules/next/dist/bin/next build",
-    "start": "node node_modules/next/dist/bin/next start",
+    "start": "node scripts/serve-out.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run content:lint",
+    "env:check": "tsx scripts/check-env.ts",
     "content:lint": "tsx scripts/validate-content.ts",
-    "content:index": "tsx scripts/build-kb-index.ts",
     "check:links": "node scripts/check-links.mjs",
     "preview:shots": "node scripts/_screenshot.mjs",
-    "prebuild": "npm run content:lint"
+    "prebuild": "npm run content:lint && npm run env:check"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

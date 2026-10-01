@@ -3,7 +3,7 @@ import {
   getPublishedArticles,
   getPublishedProductKnowledge,
 } from '@/lib/content'
-import { SITE, SITE_ORIGIN } from '@/lib/seo/site'
+import { SITE, absoluteUrl } from '@/lib/seo/site'
 
 /**
  * /llms.txt
@@ -28,13 +28,13 @@ export function GET() {
 
 ## 内容分区
 
-- 睡眠基础：${SITE_ORIGIN}/sleep/basic
-- 睡眠问题：${SITE_ORIGIN}/sleep/problems
-- 睡眠改善：${SITE_ORIGIN}/sleep/improvement
-- 睡眠营养：${SITE_ORIGIN}/sleep/nutrition
-- 睡眠知识库：${SITE_ORIGIN}/knowledge
-- 产品中心：${SITE_ORIGIN}/product
-- 睡眠自测：${SITE_ORIGIN}/sleep/self-test
+- 睡眠基础：${absoluteUrl('/sleep/basic')}
+- 睡眠问题：${absoluteUrl('/sleep/problems')}
+- 睡眠改善：${absoluteUrl('/sleep/improvement')}
+- 睡眠营养：${absoluteUrl('/sleep/nutrition')}
+- 睡眠知识库：${absoluteUrl('/knowledge')}
+- 产品中心：${absoluteUrl('/product')}
+- 睡眠自测：${absoluteUrl('/sleep/self-test')}
 
 ## 内容规模
 

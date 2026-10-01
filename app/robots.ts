@@ -10,6 +10,14 @@ import { SITE_ORIGIN } from '@/lib/seo/site'
  * 默认的全量拒绝会让整条 AI 搜索渠道直接归零——
  * 如果后续出于内容授权考虑要收紧，改这里即可，但请先确认这与获客目标不冲突。
  */
+
+/**
+ * 静态导出（output: 'export'）要求每个路由显式声明为静态，
+ * 否则构建期报「export const dynamic = "force-static" not configured」。
+ * app/sitemap.ts 与 app/llms.txt/route.ts 已有同样的声明。
+ */
+export const dynamic = 'force-static'
+
 const AI_CRAWLERS = [
   'GPTBot', // OpenAI / ChatGPT 抓取
   'OAI-SearchBot', // ChatGPT 搜索

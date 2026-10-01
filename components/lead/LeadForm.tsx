@@ -56,7 +56,10 @@ export function LeadForm({
     setStatus('submitting')
 
     try {
-      const response = await fetch('/api/leads', {
+      // 静态站部署在共享虚拟主机上，没有 Node 运行时，所以接口由 PHP 承接。
+      // 用字面文件路径而不是 /api/leads/ 目录形式：POST 遇到 301/308 重定向
+      // 是「表单静默失效」的经典成因（部分客户端会把它改写成 GET）。
+      const response = await fetch('/api/leads.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
